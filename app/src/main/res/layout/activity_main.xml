@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/dirty_white"
+        android:orientation="horizontal"
+        android:padding="12dp"
+        android:elevation="4dp">
+
+        <EditText
+            android:id="@+id/searchEditText"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:background="@drawable/rounded_edittext"
+            android:hint="Search..."
+            android:inputType="text"
+            android:padding="12dp"
+            android:textColor="@color/dark_gray"
+            android:textColorHint="@color/dark_gray"
+            android:elevation="2dp"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/cancelButton"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:text="Cancel"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            app:cornerRadius="24dp"
+            app:backgroundTint="@color/dirty_white"
+            android:textColor="@color/blue"
+            android:layout_marginStart="8dp"/>
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/background_image" />
+
+    <LinearLayout
+        android:id="@+id/sidebar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/gradient_green_background"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Admin Dashboard"
+            android:textColor="@color/white"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Popular"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <ImageButton
+                android:id="@+id/addButton"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:background="@drawable/button_selector"
+                android:src="@drawable/ic_add"
+                android:contentDescription="Add"
+                android:padding="16dp"
+                android:elevation="6dp"
+                android:layout_margin="5dp"
+                android:foreground="?attr/selectableItemBackground"
+                android:stateListAnimator="@animator/button_elevation"
+                />
+
+            <ImageButton
+                android:id="@+id/updateButton"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:background="@drawable/button_selector"
+                android:src="@drawable/ic_update"
+                android:contentDescription="Update"
+                android:padding="16dp"
+                android:elevation="6dp"
+                android:layout_margin="5dp"
+                android:foreground="?attr/selectableItemBackground"
+                android:stateListAnimator="@animator/button_elevation"
+                />
+
+            <ImageButton
+                android:id="@+id/deleteButton"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:background="@drawable/button_selector"
+                android:src="@drawable/ic_delete"
+                android:contentDescription="Delete"
+                android:padding="16dp"
+                android:elevation="6dp"
+                android:layout_margin="5dp"
+                android:foreground="?attr/selectableItemBackground"
+                android:stateListAnimator="@animator/button_elevation"
+                />
+
+            <ImageButton
+                android:id="@+id/readButton"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:background="@drawable/button_selector"
+                android:src="@drawable/ic_read"
+                android:contentDescription="Read"
+                android:padding="16dp"
+                android:elevation="6dp"
+                android:layout_margin="5dp"
+                android:foreground="?attr/selectableItemBackground"
+                android:stateListAnimator="@animator/button_elevation"
+                />
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/dirty_white"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Registered Patients"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="@color/black" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="176dp"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/black"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="62dp"
+            android:background="@drawable/rounded_top_sidebar"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/prevButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_margin="8dp"
+                android:background="@drawable/circular_button_with_outline"
+                android:contentDescription="Previous Page"
+                android:src="@drawable/ic_previous" />
+
+            <TextView
+                android:id="@+id/pageNumberTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:text="1"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <ImageButton
+                android:id="@+id/nextButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_margin="8dp"
+                android:background="@drawable/circular_button_with_outline"
+                android:contentDescription="Next Page"
+                android:src="@drawable/ic_nextpage" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
