@@ -3,9 +3,11 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="green">#4CAF50</color>
+    <color name="greenPrimary">#1B5E20</color>
     <color name="dirty_white">#E8E4C9</color>
     <color name="blue">#0000FF</color>
     <color name="light_gray">#D3D3D3</color>
     <color name="dark_gray">#C0C0C0</color>
+    <color name="lightGray">#DDDDDD</color>
 
 </resources>
