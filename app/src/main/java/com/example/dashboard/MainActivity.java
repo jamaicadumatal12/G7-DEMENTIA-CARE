@@ -12,6 +12,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
+import android.widget.Toast;
+import android.text.Editable;
+import android.text.TextWatcher;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
         // Initialize views
         recyclerView = findViewById(R.id.recyclerView);
         searchEditText = findViewById(R.id.searchEditText);
-        cancelButton = findViewById(R.id.cancelButton);
         addButton = findViewById(R.id.addButton);
         updateButton = findViewById(R.id.updateButton);
         deleteButton = findViewById(R.id.deleteButton);
@@ -61,11 +63,18 @@ public class MainActivity extends AppCompatActivity {
         adapter = new PatientAdapter(patientList); // Pass the patientList here
         recyclerView.setAdapter(adapter);
 
-        // Cancel button
-        cancelButton.setOnClickListener(v -> {
-            searchEditText.setText("");
-            adapter = new PatientAdapter(patientList); // Reset with original list
-            recyclerView.setAdapter(adapter);
+        // Add search functionality
+        searchEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filterPatients(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
         });
 
         // Pagination buttons (PLACEHOLDER logic - you MUST implement this)
@@ -109,6 +118,25 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    // Add this method for filtering patients
+    private void filterPatients(String searchText) {
+        List<Patient> filteredList = new ArrayList<>();
+        
+        if (searchText.isEmpty()) {
+            filteredList.addAll(patientList);
+        } else {
+            String searchLower = searchText.toLowerCase();
+            for (Patient patient : patientList) {
+                if (patient.getName().toLowerCase().contains(searchLower) ||
+                    patient.getAddress().toLowerCase().contains(searchLower)) {
+                    filteredList.add(patient);
+                }
+            }
+        }
+        
+        adapter = new PatientAdapter(filteredList);
+        recyclerView.setAdapter(adapter);
+    }
 
     // Example pagination method (you'll need to adapt this to your data source)
     // private List<Patient> getPatientsForPage(int page) {
