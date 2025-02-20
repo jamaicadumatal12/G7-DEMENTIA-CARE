@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "74177252927",
+    "project_id": "dementia-care-442c4",
+    "storage_bucket": "dementia-care-442c4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:74177252927:android:29ab6362e17d94fbe8f28a",
+        "android_client_info": {
+          "package_name": "com.example.dashboard"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBC9AeDIGSS_glsrj3ryasjmsVOVR_RK20"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
