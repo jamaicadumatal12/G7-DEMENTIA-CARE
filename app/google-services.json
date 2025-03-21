@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1080377934861",
+    "project_id": "g7-dementia-care",
+    "storage_bucket": "g7-dementia-care.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1080377934861:android:f00f9f267661248f1d4144",
+        "android_client_info": {
+          "package_name": "com.example.dashboard"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyARReH5qGf5UsqGp04DEZ7IKSM589aE7tA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

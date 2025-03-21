@@ -1,28 +1,33 @@
 package com.example.dashboard;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import com.example.dashboard.utils.FirebaseHelper;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.android.material.button.MaterialButton;
 
 public class RegisterActivity extends AppCompatActivity {
     private EditText editName, editEmail, editAddress, editPassword, editConfirmPassword;
-    private Button buttonRegister;
+    private MaterialButton buttonRegister;
     private TextView textLogin;
-    private SharedPreferences sharedPreferences;
+    private ProgressBar registerProgress;
+    private FirebaseAuth auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        sharedPreferences = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+        auth = FirebaseAuth.getInstance();
 
         editName = findViewById(R.id.edit_name);
         editEmail = findViewById(R.id.edit_email);
@@ -31,12 +36,25 @@ public class RegisterActivity extends AppCompatActivity {
         editConfirmPassword = findViewById(R.id.edit_confirm_password);
         buttonRegister = findViewById(R.id.button_register);
         textLogin = findViewById(R.id.text_login);
+        registerProgress = findViewById(R.id.registerProgress);
 
-        buttonRegister.setOnClickListener(view -> registerUser());
-
+        buttonRegister.setOnClickListener(v -> registerUser());
         textLogin.setOnClickListener(view -> {
             startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+            finish();
         });
+    }
+
+    private void setLoading(boolean isLoading) {
+        if (isLoading) {
+            buttonRegister.setEnabled(false);
+            buttonRegister.setText("");
+            registerProgress.setVisibility(View.VISIBLE);
+        } else {
+            buttonRegister.setEnabled(true);
+            buttonRegister.setText(R.string.register);
+            registerProgress.setVisibility(View.GONE);
+        }
     }
 
     private void registerUser() {
@@ -56,13 +74,29 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("username", email);
-        editor.putString("password", password);
-        editor.apply();
+        setLoading(true);
 
-        Toast.makeText(this, "Registration Successful!", Toast.LENGTH_SHORT).show();
-        startActivity(new Intent(this, LoginActivity.class));
-        finish();
+        FirebaseHelper.registerUser(email, password, name, address, new FirebaseHelper.OnAuthListener() {
+            @Override
+            public void onSuccess(FirebaseUser user) {
+                setLoading(false);
+                // Show verification email sent dialog
+                new AlertDialog.Builder(RegisterActivity.this)
+                    .setTitle("Verify Your Email")
+                    .setMessage("A verification email has been sent to " + email + ". Please verify your email before logging in.")
+                    .setPositiveButton("OK", (dialog, which) -> {
+                        startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+                        finish();
+                    })
+                    .setCancelable(false)
+                    .show();
+            }
+
+            @Override
+            public void onError(String error) {
+                setLoading(false);
+                Toast.makeText(RegisterActivity.this, "Registration failed: " + error, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
