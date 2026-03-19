@@ -74,7 +74,10 @@
                 android:layout_height="40dp"
                 android:src="@drawable/ic_delete_vector"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:padding="8dp"/>
+                android:padding="8dp"
+                android:tint="@color/dark_gray"
+                app:tint="@color/dark_gray"
+                android:contentDescription="Delete patient"/>
         </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView> 

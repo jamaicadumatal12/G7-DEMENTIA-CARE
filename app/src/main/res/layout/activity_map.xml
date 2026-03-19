@@ -1,33 +1,244 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
+    <!-- Map View -->
     <org.osmdroid.views.MapView
-        android:id="@+id/mapView"
+        android:id="@+id/map"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clickable="true"
-        android:focusable="true"/>
+        android:layout_height="match_parent" />
 
-    <ImageButton
-        android:id="@+id/backButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:padding="8dp"
-        android:src="@android:drawable/ic_menu_close_clear_cancel"/>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/myLocationButton"
+<<<<<<< HEAD
+    <!-- Custom Zoom Controls -->
+    <LinearLayout
+        android:id="@+id/zoomControlsLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="16dp"
+        android:orientation="vertical"
+        android:background="@drawable/zoom_controls_background"
+        android:elevation="8dp"
+        android:padding="4dp">
+=======
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_margin="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_back" />
+>>>>>>> b5d2a787b9a45a98a510a50dd5229195138620a5
+
+        <ImageButton
+            android:id="@+id/zoomInButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_zoom_in"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:tint="@color/white"
+            android:contentDescription="Zoom In"
+            android:scaleType="centerInside"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/white"
+            android:alpha="0.3"
+            android:layout_marginVertical="2dp"/>
+
+        <ImageButton
+            android:id="@+id/zoomOutButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_zoom_out"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:tint="@color/white"
+            android:contentDescription="Zoom Out"
+            android:scaleType="centerInside"/>
+
+    </LinearLayout>
+
+    <!-- Zoom Level Indicator -->
+    <TextView
+        android:id="@+id/zoomLevelText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
         android:layout_margin="16dp"
+        android:background="@drawable/zoom_level_background"
+        android:padding="8dp"
+        android:text="Zoom: 15"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:fontFamily="sans-serif-medium"/>
+
+    <!-- Top Bar -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageButton
+                    android:id="@+id/backButton"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:padding="12dp"
+                    android:src="@android:drawable/ic_menu_close_clear_cancel"/>
+
+                <TextView
+                    android:id="@+id/titleText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Set Safe Zone"
+                    android:textSize="20sp"
+                    android:textColor="#333333"
+                    android:layout_marginStart="8dp"
+                    android:fontFamily="sans-serif-medium"/>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/helpText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Tap on the map to set patient's safe zone"
+                android:textSize="14sp"
+                android:textColor="#666666"
+                android:layout_marginTop="4dp"
+                android:layout_marginStart="8dp"/>
+
+            <TextView
+                android:id="@+id/coordinatesText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textColor="#333333"
+                android:layout_marginTop="4dp"
+                android:layout_marginStart="8dp"/>
+
+            <!-- Device online/offline status -->
+            <TextView
+                android:id="@+id/deviceStatusText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Status: checking..."
+                android:textSize="14sp"
+                android:textColor="@color/dark_gray"
+                android:layout_marginTop="2dp"
+                android:layout_marginStart="8dp"/>
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <!-- Bottom Control Panel -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/bottomPanel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="16dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Radius Control -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Safe Zone Radius"
+                android:textSize="18sp"
+                android:textColor="#333333"
+                android:fontFamily="sans-serif-medium"/>
+
+            <TextView
+                android:id="@+id/radiusText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Radius: 30m"
+                android:textSize="16sp"
+                android:textColor="#666666"
+                android:layout_marginTop="8dp"/>
+
+            <SeekBar
+                android:id="@+id/radiusSeekBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp"
+                android:max="5000"
+                android:progress="30"/>
+
+            <!-- Save Button -->
+            <Button
+                android:id="@+id/saveZoneButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Save Safe Zone"
+                android:textColor="@android:color/white"
+                android:backgroundTint="@color/green_500"/>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Location FAB -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/locationButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/bottomPanel"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="16dp"
+<<<<<<< HEAD
         android:src="@drawable/ic_my_location"
-        android:backgroundTint="@color/greenPrimary"
-        app:tint="@color/white"/>
+        app:backgroundTint="#4CAF50"
+        app:tint="@android:color/white"
+        app:fabSize="normal"
+        app:elevation="6dp"/>
+
+</RelativeLayout>
+=======
+        android:src="@drawable/ic_my_location" />
+
+    <Button
+        android:id="@+id/editSafeZoneButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="16dp"
+        android:text="Edit Safe Zone" />
+
+    <ImageButton
+        android:id="@+id/settingsButton"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_settings" />
+
 </RelativeLayout> 
+>>>>>>> b5d2a787b9a45a98a510a50dd5229195138620a5

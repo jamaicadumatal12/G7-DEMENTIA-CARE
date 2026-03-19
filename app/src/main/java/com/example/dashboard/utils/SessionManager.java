@@ -2,6 +2,7 @@ package com.example.dashboard.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class SessionManager {
     private static final String PREF_NAME = "DashboardSession";
@@ -32,5 +33,13 @@ public class SessionManager {
 
     public boolean isLoggedIn() {
         return prefs.getBoolean(KEY_IS_LOGGED_IN, false);
+    }
+
+    public void logout() {
+        editor.clear();
+        editor.commit();
+        
+        // Sign out from Firebase
+        FirebaseAuth.getInstance().signOut();
     }
 } 

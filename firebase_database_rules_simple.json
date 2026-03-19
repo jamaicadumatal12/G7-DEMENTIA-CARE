@@ -1,0 +1,44 @@
+{
+  "rules": {
+    // Simple rules for testing - allow device to write data
+    "devices": {
+      ".read": true,   // Allow reading for testing
+      ".write": true   // Allow writing for testing
+    },
+    
+    "alerts": {
+      ".read": true,   // Allow reading for testing
+      ".write": true   // Allow writing for testing
+    },
+    
+    "zones": {
+      ".read": true,   // Allow reading for testing
+      ".write": true   // Allow writing for testing
+    },
+    
+    "users": {
+      ".read": true,   // Allow reading for testing
+      ".write": true   // Allow writing for testing
+    },
+    
+    "patients": {
+      ".read": true,   // Allow reading for testing
+      ".write": true   // Allow writing for testing
+    },
+    
+    "location_history": {
+      ".read": true,   // Allow reading for testing
+      ".write": true   // Allow writing for testing
+    },
+    
+    "test_connection": {
+      ".read": true,
+      ".write": true
+    },
+    
+    "connection_test": {
+      ".read": true,
+      ".write": true
+    }
+  }
+}

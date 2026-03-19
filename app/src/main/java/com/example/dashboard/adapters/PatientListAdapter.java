@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.dashboard.R;
 import com.example.dashboard.PatientDetailsActivity;
+import com.example.dashboard.MapActivity;
 import com.example.dashboard.models.PatientModel;
 import java.util.List;
 
@@ -23,10 +25,10 @@ public class PatientListAdapter extends RecyclerView.Adapter<PatientListAdapter.
     private OnPatientActionListener listener;
     private Context context;
 
-    public PatientListAdapter(List<PatientModel> patients, OnPatientActionListener listener) {
+    public PatientListAdapter(Context context, List<PatientModel> patients, OnPatientActionListener listener) {
+        this.context = context;
         this.patients = patients;
         this.listener = listener;
-        this.context = context;
     }
 
     @Override
@@ -38,21 +40,60 @@ public class PatientListAdapter extends RecyclerView.Adapter<PatientListAdapter.
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        PatientModel patient = patients.get(position);
-        holder.patientName.setText(patient.getName());
-        holder.patientAge.setText("Age " + patient.getAge());
+        try {
+            PatientModel patient = patients.get(position);
+            
+            // Add null checks
+            if (holder.patientName != null && patient.getName() != null) {
+                holder.patientName.setText(patient.getName());
+            }
+            if (holder.patientAge != null) {
+                holder.patientAge.setText("Age: " + patient.getAge());
+            }
+            if (holder.patientLocation != null) {
+                holder.patientLocation.setText("Location: " + 
+                    String.format("%.6f, %.6f", patient.getLatitude(), patient.getLongitude()));
+            }
 
-        holder.btnNotes.setOnClickListener(v -> {
-            Context context = v.getContext();
-            Intent intent = new Intent(context, PatientDetailsActivity.class);
-            intent.putExtra("patient_name", patient.getName());
-            intent.putExtra("patient_age", patient.getAge());
-            intent.putExtra("patient_id", patient.getId());
-            context.startActivity(intent);
-        });
-        
-        holder.btnRefresh.setOnClickListener(v -> listener.onRefreshClick(patient));
-        holder.btnDelete.setOnClickListener(v -> showDeleteConfirmationDialog(v.getContext(), patient));
+            // Set click listeners
+            if (holder.btnNotes != null) {
+                holder.btnNotes.setOnClickListener(v -> {
+                    if (listener != null) listener.onNotesClick(patient);
+                });
+            }
+            if (holder.btnRefresh != null) {
+                holder.btnRefresh.setOnClickListener(v -> {
+                    if (listener != null) listener.onRefreshClick(patient);
+                });
+            }
+            if (holder.btnDelete != null) {
+                holder.btnDelete.setOnClickListener(v -> {
+                    if (listener != null) listener.onDeleteClick(patient);
+                });
+            }
+<<<<<<< HEAD
+            
+            // Change item click to open map activity (temporary fix)
+            holder.itemView.setOnClickListener(v -> {
+                if (context != null) {
+                    try {
+                        Intent intent = new Intent(context, MapActivity.class);
+                        intent.putExtra("patient_id", patient.getId());
+                        intent.putExtra("patient_name", patient.getName());
+                        intent.putExtra("patient_lat", patient.getLatitude());
+                        intent.putExtra("patient_lon", patient.getLongitude());
+                        context.startActivity(intent);
+                    } catch (Exception e) {
+                        Log.e("PatientListAdapter", "Error opening MapActivity: " + e.getMessage());
+                        Toast.makeText(context, "Error opening map: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+=======
+>>>>>>> b5d2a787b9a45a98a510a50dd5229195138620a5
+        } catch (Exception e) {
+            Log.e("PatientListAdapter", "Error binding view holder: " + e.getMessage());
+        }
     }
 
     private void showDeleteConfirmationDialog(Context context, PatientModel patient) {
@@ -91,12 +132,14 @@ public class PatientListAdapter extends RecyclerView.Adapter<PatientListAdapter.
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView patientName;
         TextView patientAge;
+        TextView patientLocation;
         ImageButton btnNotes, btnRefresh, btnDelete;
 
         public ViewHolder(View view) {
             super(view);
             patientName = view.findViewById(R.id.patientName);
             patientAge = view.findViewById(R.id.patientAge);
+            patientLocation = view.findViewById(R.id.patientLocation);
             btnNotes = view.findViewById(R.id.btnNotes);
             btnRefresh = view.findViewById(R.id.btnRefresh);
             btnDelete = view.findViewById(R.id.btnDelete);
@@ -107,5 +150,11 @@ public class PatientListAdapter extends RecyclerView.Adapter<PatientListAdapter.
         void onNotesClick(PatientModel patient);
         void onRefreshClick(PatientModel patient);
         void onDeleteClick(PatientModel patient);
+        void onUpdateClick(PatientModel patient);
+    }
+
+    public void updatePatients(List<PatientModel> newPatients) {
+        this.patients = newPatients;
+        notifyDataSetChanged();
     }
 } 

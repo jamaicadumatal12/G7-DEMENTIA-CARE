@@ -1,0 +1,96 @@
+  {
+    "rules": {
+      "patients": {
+        "$patientId": {
+          ".read": "auth != null && (auth.uid == $patientId || root.child('users').child(auth.uid).child('patients').child($patientId).exists())",
+          ".write": "auth != null && (auth.uid == $patientId || root.child('users').child(auth.uid).child('patients').child($patientId).exists())",
+          "$deviceId": {
+            ".read": "auth != null && (auth.uid == $patientId || root.child('users').child(auth.uid).child('patients').child($patientId).exists())",
+            ".write": "auth != null && (auth.uid == $patientId || root.child('users').child(auth.uid).child('patients').child($patientId).exists())"
+          }
+        }
+      },
+      
+      "devices": {
+        "$deviceId": {
+          ".read": "auth != null && (root.child('users').child(auth.uid).child('devices').child($deviceId).exists())",
+          ".write": "auth != null && (root.child('users').child(auth.uid).child('devices').child($deviceId).exists())",
+          "latitude": {
+            ".validate": "newData.isNumber() && newData.val() >= -90 && newData.val() <= 90"
+          },
+          "longitude": {
+            ".validate": "newData.isNumber() && newData.val() >= -180 && newData.val() <= 180"
+          },
+          "timestamp": {
+            ".validate": "newData.isNumber()"
+          },
+          "inDanger": {
+            ".validate": "newData.isBoolean()"
+          },
+          "batteryLevel": {
+            ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100"
+          },
+          "satellites": {
+            ".validate": "newData.isNumber() && newData.val() >= 0"
+          },
+          "hdop": {
+            ".validate": "newData.isNumber() && newData.val() >= 0"
+          }
+        }
+      },
+      
+      "users": {
+        "$uid": {
+          ".read": "auth != null && auth.uid == $uid",
+          ".write": "auth != null && auth.uid == $uid"
+        }
+      },
+      
+      "zones": {
+        "$deviceId": {
+          ".read": "auth != null && (root.child('users').child(auth.uid).child('devices').child($deviceId).exists())",
+          ".write": "auth != null && (root.child('users').child(auth.uid).child('devices').child($deviceId).exists())",
+          "$zoneId": {
+            ".read": "auth != null && (root.child('users').child(auth.uid).child('devices').child($deviceId).exists())",
+            ".write": "auth != null && (root.child('users').child(auth.uid).child('devices').child($deviceId).exists())",
+            "latitude": {
+              ".validate": "newData.isNumber() && newData.val() >= -90 && newData.val() <= 90"
+            },
+            "longitude": {
+              ".validate": "newData.isNumber() && newData.val() >= -180 && newData.val() <= 180"
+            },
+            "radius": {
+              ".validate": "newData.isNumber() && newData.val() >= 10 && newData.val() <= 5000"
+            },
+            "type": {
+              ".validate": "newData.isString() && (newData.val() == 'safe' || newData.val() == 'danger')"
+            }
+          }
+        }
+      },
+      
+      "location_history": {
+        "$deviceId": {
+          ".read": "auth != null && (root.child('users').child(auth.uid).child('devices').child($deviceId).exists())",
+          ".write": "auth != null && (root.child('users').child(auth.uid).child('devices').child($deviceId).exists())"
+        }
+      },
+      
+      "alerts": {
+        "$alertId": {
+          ".read": "auth != null && (data.child('userId').val() == auth.uid || root.child('users').child(auth.uid).child('role').val() == 'admin')",
+          ".write": "auth != null && (data.child('userId').val() == auth.uid || root.child('users').child(auth.uid).child('role').val() == 'admin')"
+        }
+      },
+      
+      "test_connection": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      },
+      
+      "connection_test": {
+        ".read": "auth != null", 
+        ".write": "auth != null"
+      }
+    }
+  } 

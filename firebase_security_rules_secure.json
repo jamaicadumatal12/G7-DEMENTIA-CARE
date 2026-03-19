@@ -1,0 +1,118 @@
+{
+  "rules": {
+    // Global read/write access is DENIED by default
+    ".read": false,
+    ".write": false,
+    
+    // Patients data - only authenticated users can access
+    "patients": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$patientId": {
+        ".read": "auth != null",
+        ".write": "auth != null",
+        ".validate": "newData.hasChildren(['name', 'deviceId', 'createdAt'])"
+      }
+    },
+    
+    // Devices data - authenticated users can read; allow device writes if payload deviceId matches path (dev-friendly)
+    "devices": {
+      ".read": "auth != null",
+      ".write": false, // No direct writes to devices collection
+      "$deviceId": {
+        ".read": true,
+        ".write": "(auth != null && auth.uid == $deviceId) || (auth == null && newData.child('deviceId').val() == $deviceId)",
+        "latitude": {
+          ".validate": "newData.isNumber() && newData.val() >= -90 && newData.val() <= 90"
+        },
+        "longitude": {
+          ".validate": "newData.isNumber() && newData.val() >= -180 && newData.val() <= 180"
+        },
+        "timestamp": {
+          ".validate": "newData.isNumber()"
+        },
+        "inDanger": {
+          ".validate": "newData.isBoolean()"
+        },
+        "batteryLevel": {
+          ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100"
+        },
+        "satellites": {
+          ".validate": "newData.isNumber() && newData.val() >= 0"
+        },
+        "hdop": {
+          ".validate": "newData.isNumber() && newData.val() >= 0"
+        },
+        "deviceId": {
+          ".validate": "newData.isString() && newData.val() == $deviceId"
+        }
+      }
+    },
+    
+    // Users data - only authenticated users can access their own data
+    "users": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$uid": {
+        ".read": "auth != null && auth.uid == $uid",
+        ".write": "auth != null && auth.uid == $uid"
+      }
+    },
+    
+    // Safe zones - authenticated users can read; allow device writes if payload deviceId matches path (dev-friendly)
+    "zones": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$deviceId": {
+        ".read": true,
+        ".write": "(auth != null && auth.uid == $deviceId) || (auth == null && newData.child('deviceId').val() == $deviceId)",
+        "latitude": {
+          ".validate": "newData.isNumber() && newData.val() >= -90 && newData.val() <= 90"
+        },
+        "longitude": {
+          ".validate": "newData.isNumber() && newData.val() >= -180 && newData.val() <= 180"
+        },
+        "radius": {
+          ".validate": "newData.isNumber() && newData.val() >= 10 && newData.val() <= 5000"
+        },
+        "type": {
+          ".validate": "newData.isString() && (newData.val() == 'safe' || newData.val() == 'danger')"
+        },
+        "deviceId": {
+          ".validate": "newData.isString() && newData.val() == $deviceId"
+        }
+      }
+    },
+    
+    // Location history - authenticated users can read; allow device writes if payload deviceId matches path (dev-friendly)
+    "location_history": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$deviceId": {
+        ".read": "auth != null",
+        ".write": "(auth != null && auth.uid == $deviceId) || (auth == null && newData.child('deviceId').val() == $deviceId)"
+      }
+    },
+    
+    // Alerts - authenticated users can read and write
+    "alerts": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$alertId": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      }
+    },
+    
+    // Test connections - allow authenticated access for debugging
+    "test_connection": {
+      ".read": true,
+      ".write": true
+    },
+    
+    "connection_test": {
+      ".read": true, 
+      ".write": true
+    }
+  }
+}

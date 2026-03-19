@@ -18,8 +18,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import androidx.annotation.NonNull;
+import android.util.Log;
 
 public class LoginActivity extends AppCompatActivity {
+    private static final String TAG = "LoginActivity";
     private TextInputEditText emailInput, passwordInput;
     private MaterialButton loginButton;
     private TextView registerText, forgotPasswordText;
@@ -32,6 +34,13 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         sessionManager = new SessionManager(this);
+        
+        // Initialize Firebase
+        try {
+            FirebaseHelper.initializeFirebase(this);
+        } catch (Exception e) {
+            Log.e(TAG, "Error initializing Firebase: " + e.getMessage());
+        }
 
         emailInput = findViewById(R.id.emailInput);
         passwordInput = findViewById(R.id.passwordInput);
@@ -43,6 +52,35 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.setOnClickListener(v -> handleLogin());
         registerText.setOnClickListener(v -> startActivity(new Intent(this, RegisterActivity.class)));
         forgotPasswordText.setOnClickListener(v -> handleForgotPassword());
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart called");
+<<<<<<< HEAD
+
+        // If user is already logged in, skip login screen and go directly to MainActivity
+        try {
+            if (sessionManager != null && sessionManager.isLoggedIn()
+                    && FirebaseHelper.getCurrentUser() != null) {
+                Log.d(TAG, "User already logged in, redirecting to MainActivity");
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error checking login session in onStart: " + e.getMessage());
+        }
+=======
+>>>>>>> b5d2a787b9a45a98a510a50dd5229195138620a5
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume called");
     }
 
     private void setLoading(boolean isLoading) {
@@ -67,28 +105,37 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         setLoading(true);
+        Log.d(TAG, "Attempting login for email: " + email);
 
-        FirebaseHelper.loginUser(email, password, new FirebaseHelper.OnAuthListener() {
-            @Override
-            public void onSuccess(FirebaseUser user) {
-                setLoading(false);
-                sessionManager.setLoggedIn(true, user.getUid(), user.getEmail());
-                startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                finish();
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-                if (errorMessage.contains("invalid") || errorMessage.contains("incorrect")) {
-                    showError("Invalid email or password. Please try again.");
-                } else if (errorMessage.contains("no user")) {
-                    showError("No account found with this email. Please check your email or sign up.");
-                } else {
-                    showError("Unable to sign in. Please check your internet connection and try again.");
+        try {
+            FirebaseHelper.loginUser(email, password, new FirebaseHelper.OnAuthListener() {
+                @Override
+                public void onSuccess(FirebaseUser user) {
+                    Log.d(TAG, "Login successful for user: " + user.getEmail());
+                    runOnUiThread(() -> {
+                        setLoading(false);
+                        sessionManager.setLoggedIn(true, user.getUid(), user.getEmail());
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        finish();
+                    });
                 }
-                hideProgressBar();
-            }
-        });
+
+                @Override
+                public void onError(String errorMessage) {
+                    Log.e(TAG, "Login error: " + errorMessage);
+                    runOnUiThread(() -> {
+                        setLoading(false);
+                        Toast.makeText(LoginActivity.this, errorMessage, Toast.LENGTH_LONG).show();
+                    });
+                }
+            });
+        } catch (Exception e) {
+            Log.e(TAG, "Unexpected error during login: " + e.getMessage());
+            setLoading(false);
+            Toast.makeText(this, "An unexpected error occurred", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void handleForgotPassword() {
@@ -111,13 +158,5 @@ public class LoginActivity extends AppCompatActivity {
                         Toast.LENGTH_LONG).show();
                 }
             });
-    }
-
-    private void hideProgressBar() {
-        setLoading(false);
-    }
-
-    private void showError(String message) {
-        Toast.makeText(LoginActivity.this, message, Toast.LENGTH_SHORT).show();
     }
 }

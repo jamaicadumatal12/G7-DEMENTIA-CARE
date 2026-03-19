@@ -1,0 +1,76 @@
+{
+  "rules": {
+    ".read": "auth != null",
+    ".write": "auth != null",
+    
+    "patients": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$deviceId": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      }
+    },
+    
+    "devices": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$deviceId": {
+        ".read": "auth != null",
+        ".write": "auth != null",
+        "latitude": {
+          ".validate": "newData.isNumber() && newData.val() >= -90 && newData.val() <= 90"
+        },
+        "longitude": {
+          ".validate": "newData.isNumber() && newData.val() >= -180 && newData.val() <= 180"
+        },
+        "timestamp": {
+          ".validate": "newData.isNumber()"
+        },
+        "inDanger": {
+          ".validate": "newData.isBoolean()"
+        }
+      }
+    },
+    
+    "users": {
+      "$uid": {
+        ".read": "auth != null && auth.uid == $uid",
+        ".write": "auth != null && auth.uid == $uid"
+      }
+    },
+    
+    "location_history": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    
+    "alerts": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    
+    "zones": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$deviceId": {
+        ".read": "auth != null",
+        ".write": "auth != null",
+        "$zoneId": {
+          ".read": "auth != null",
+          ".write": "auth != null"
+        }
+      }
+    },
+    
+    "test_connection": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    
+    "connection_test": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    }
+  }
+} 

@@ -10,4 +10,12 @@
     <string name="confirm_password">Re-enter password</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+<<<<<<< HEAD
+    
+
+=======
+    <string name="action_change_radius">Change Safe Zone Radius</string>
+    <string name="action_map_type">Map Type</string>
+    <string name="action_tracking_interval">Update Interval</string>
+>>>>>>> b5d2a787b9a45a98a510a50dd5229195138620a5
 </resources>

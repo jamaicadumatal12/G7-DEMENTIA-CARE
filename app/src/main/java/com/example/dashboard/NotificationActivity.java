@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.dashboard.adapters.NotificationAdapter;
 import com.example.dashboard.models.PatientModel;
+import com.example.dashboard.models.LocationHistoryModel;
 import com.example.dashboard.interfaces.PatientClickListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -19,10 +20,21 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collections;
+import java.util.Comparator;
 import com.example.dashboard.utils.NetworkUtils;
+import com.example.dashboard.utils.FirebaseHelper;
 
+/**
+ * NotificationActivity - Displays notification history for patient alerts
+ * 
+ * NOTE: This activity includes DUMMY DATA functionality for screenshot/documentation purposes.
+ * When no real data is available, it automatically displays 3 sample notifications.
+ * TODO: Remove dummy data methods (createDummyAlerts, createDummyPatients) after completing documentation.
+ */
 public class NotificationActivity extends AppCompatActivity implements PatientClickListener {
     private NotificationAdapter adapter;
+    private static final String TAG = "NotificationActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,20 +51,11 @@ public class NotificationActivity extends AppCompatActivity implements PatientCl
         ImageButton backButton = findViewById(R.id.backButton);
         backButton.setOnClickListener(v -> finish());
 
-        // Load patients from Firebase
-        loadPatients();
+        // Load alerts from Firebase
+        loadAlerts();
     }
 
-    @Override
-    public void onPatientClick(PatientModel patient) {
-        Intent intent = new Intent(this, MapActivity.class);
-        intent.putExtra("patient_name", patient.getName());
-        intent.putExtra("patient_lat", patient.getLatitude());
-        intent.putExtra("patient_lon", patient.getLongitude());
-        startActivity(intent);
-    }
-
-    private void loadPatients() {
+    private void loadAlerts() {
         // Show loading indicator
         findViewById(R.id.loadingProgress).setVisibility(View.VISIBLE);
         findViewById(R.id.emptyView).setVisibility(View.GONE);
@@ -62,52 +65,136 @@ public class NotificationActivity extends AppCompatActivity implements PatientCl
             return;
         }
 
-        Log.d("NotificationActivity", "Starting to load patients");
-        
-        DatabaseReference patientsRef = FirebaseDatabase.getInstance().getReference("patients");
-        patientsRef.keepSynced(true);
+        Log.d(TAG, "Starting to load alerts");
 
-        // Add dummy data directly if no data exists
-        PatientModel patient1 = new PatientModel("P001", "Juan Dela Cruz", 71, 14.5995, 120.9842);
-        PatientModel patient2 = new PatientModel("P002", "Maria Clara", 65, 14.6037, 120.9821);
-        
-        List<PatientModel> dummyList = new ArrayList<>();
-        dummyList.add(patient1);
-        dummyList.add(patient2);
-        
-        // Update UI with dummy data
-        adapter.setPatients(dummyList);
-        findViewById(R.id.loadingProgress).setVisibility(View.GONE);
-        findViewById(R.id.emptyView).setVisibility(View.GONE);
-        
-        // Save dummy data to Firebase in background
-        for (PatientModel patient : dummyList) {
-            patientsRef.child(patient.getId()).setValue(patient)
-                .addOnSuccessListener(aVoid -> Log.d("NotificationActivity", "Added patient: " + patient.getName()))
-                .addOnFailureListener(e -> Log.e("NotificationActivity", "Error adding patient: " + e.getMessage()));
-        }
+        // Get all patients first
+        FirebaseHelper.getPatientsReference()
+            .addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    List<PatientModel> allPatients = new ArrayList<>();
+                    for (DataSnapshot patientSnapshot : snapshot.getChildren()) {
+                        PatientModel patient = patientSnapshot.getValue(PatientModel.class);
+                        if (patient != null) {
+                            allPatients.add(patient);
+                        }
+                    }
+                    
+                    if (allPatients.isEmpty()) {
+                        // No patients → show empty state, no dummy data
+                        runOnUiThread(() -> {
+                            adapter.setAlerts(new ArrayList<>(), new ArrayList<>());
+                            findViewById(R.id.loadingProgress).setVisibility(View.GONE);
+                            findViewById(R.id.emptyView).setVisibility(View.VISIBLE);
+                        });
+                        return;
+                    }
+
+                    // Load alerts for each patient
+                    List<LocationHistoryModel> allAlerts = new ArrayList<>();
+                    int[] loadedCount = {0};
+
+                    for (PatientModel patient : allPatients) {
+                        FirebaseHelper.getAlerts(patient.getId(), new FirebaseHelper.OnLocationHistoryListener() {
+                            @Override
+                            public void onHistoryLoaded(List<LocationHistoryModel> alerts) {
+                                allAlerts.addAll(alerts);
+                                loadedCount[0]++;
+
+                                // If all patients' alerts are loaded
+                                if (loadedCount[0] == allPatients.size()) {
+                                    // Sort alerts by timestamp (newest first)
+                                    Collections.sort(allAlerts, (a1, a2) -> 
+                                        Long.compare(a2.getTimestamp(), a1.getTimestamp()));
+                                    
+                                    // Update UI on main thread
+                                    runOnUiThread(() -> {
+                                        List<LocationHistoryModel> finalAlerts = allAlerts;
+                                        List<PatientModel> finalPatients = allPatients;
+
+                                        adapter.setAlerts(finalAlerts, finalPatients);
+                                        findViewById(R.id.loadingProgress).setVisibility(View.GONE);
+                                        
+                                        if (finalAlerts.isEmpty()) {
+                                            findViewById(R.id.emptyView).setVisibility(View.VISIBLE);
+                                        } else {
+                                            findViewById(R.id.emptyView).setVisibility(View.GONE);
+                                        }
+                                    });
+                                }
+                            }
+
+                            @Override
+                            public void onError(String error) {
+                                Log.e(TAG, "Error loading alerts: " + error);
+                                loadedCount[0]++;
+
+                                // If all attempts are complete (even with errors)
+                                if (loadedCount[0] == allPatients.size()) {
+                                    runOnUiThread(() -> {
+                                        List<LocationHistoryModel> finalAlerts = allAlerts;
+                                        List<PatientModel> finalPatients = allPatients;
+
+                                        adapter.setAlerts(finalAlerts, finalPatients);
+                                        findViewById(R.id.loadingProgress).setVisibility(View.GONE);
+                                        
+                                        if (finalAlerts.isEmpty()) {
+                                            findViewById(R.id.emptyView).setVisibility(View.VISIBLE);
+                                        } else {
+                                            findViewById(R.id.emptyView).setVisibility(View.GONE);
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    Log.e(TAG, "Error loading patients: " + error.getMessage());
+                    handleError("Error loading patients: " + error.getMessage());
+                }
+            });
+    }
+
+    @Override
+    public void onPatientClick(PatientModel patient) {
+        // Create intent to open MapActivity with patient's location
+        Intent intent = new Intent(this, MapActivity.class);
+        intent.putExtra("patient_id", patient.getId());
+        intent.putExtra("patient_name", patient.getName());
+        intent.putExtra("patient_lat", patient.getLatitude());
+        intent.putExtra("patient_lon", patient.getLongitude());
+        startActivity(intent);
     }
 
     private void handleNoNetwork() {
         runOnUiThread(() -> {
+            adapter.setAlerts(new ArrayList<>(), new ArrayList<>());
             findViewById(R.id.loadingProgress).setVisibility(View.GONE);
             findViewById(R.id.emptyView).setVisibility(View.VISIBLE);
             Toast.makeText(this, "No internet connection. Please check your network.", 
-                Toast.LENGTH_SHORT).show();
+                 Toast.LENGTH_SHORT).show();
         });
     }
 
     private void handleError(String error) {
-        findViewById(R.id.loadingProgress).setVisibility(View.GONE);
-        findViewById(R.id.emptyView).setVisibility(View.VISIBLE);
-        Toast.makeText(this, "Error loading patients: " + error, Toast.LENGTH_LONG).show();
+        runOnUiThread(() -> {
+            adapter.setAlerts(new ArrayList<>(), new ArrayList<>());
+            findViewById(R.id.loadingProgress).setVisibility(View.GONE);
+            findViewById(R.id.emptyView).setVisibility(View.VISIBLE);
+            Toast.makeText(this, error, Toast.LENGTH_LONG).show();
+        });
     }
 
     private void updateUI(List<PatientModel> patientList) {
-        adapter.setPatients(patientList);
+        List<LocationHistoryModel> alerts = new ArrayList<>();
+        
+        adapter.setAlerts(alerts, patientList);
         findViewById(R.id.loadingProgress).setVisibility(View.GONE);
         
-        if (patientList.isEmpty()) {
+        if (alerts.isEmpty()) {
             findViewById(R.id.emptyView).setVisibility(View.VISIBLE);
             Log.d("NotificationActivity", "Showing empty view");
         } else {

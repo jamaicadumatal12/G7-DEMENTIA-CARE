@@ -1,0 +1,102 @@
+{
+  "rules": {
+    "patients": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$patientId": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      }
+    },
+    
+    "devices": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$deviceId": {
+        ".read": "auth != null",
+        ".write": "auth != null",
+        "latitude": {
+          ".validate": "newData.isNumber() && newData.val() >= -90 && newData.val() <= 90"
+        },
+        "longitude": {
+          ".validate": "newData.isNumber() && newData.val() >= -180 && newData.val() <= 180"
+        },
+        "timestamp": {
+          ".validate": "newData.isNumber()"
+        },
+        "inDanger": {
+          ".validate": "newData.isBoolean()"
+        },
+        "batteryLevel": {
+          ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100"
+        },
+        "satellites": {
+          ".validate": "newData.isNumber() && newData.val() >= 0"
+        },
+        "hdop": {
+          ".validate": "newData.isNumber() && newData.val() >= 0"
+        }
+      }
+    },
+    
+    "users": {
+      "$uid": {
+        ".read": "auth != null && auth.uid == $uid",
+        ".write": "auth != null && auth.uid == $uid"
+      }
+    },
+    
+    "zones": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$deviceId": {
+        ".read": "auth != null",
+        ".write": "auth != null",
+        "$zoneId": {
+          ".read": "auth != null",
+          ".write": "auth != null",
+          "latitude": {
+            ".validate": "newData.isNumber() && newData.val() >= -90 && newData.val() <= 90"
+          },
+          "longitude": {
+            ".validate": "newData.isNumber() && newData.val() >= -180 && newData.val() <= 180"
+          },
+          "radius": {
+            ".validate": "newData.isNumber() && newData.val() >= 10 && newData.val() <= 5000"
+          },
+          "type": {
+            ".validate": "newData.isString() && (newData.val() == 'safe' || newData.val() == 'danger')"
+          }
+        }
+      }
+    },
+    
+    "location_history": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$deviceId": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      }
+    },
+    
+    "alerts": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$alertId": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      }
+    },
+    
+    "test_connection": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    
+    "connection_test": {
+      ".read": "auth != null", 
+      ".write": "auth != null"
+    }
+  }
+} 

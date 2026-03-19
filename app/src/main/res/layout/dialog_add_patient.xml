@@ -54,11 +54,12 @@
         app:hintTextColor="@color/greenPrimary">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/ageInput"
+            android:id="@+id/birthdateInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Age"
-            android:inputType="number"/>
+            android:hint="Birthdate"
+            android:focusable="false"
+            android:clickable="true"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -70,18 +71,18 @@
         app:hintTextColor="@color/greenPrimary">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/birthDateInput"
+            android:id="@+id/ageInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Birthdate"
-            android:focusable="false"
-            android:clickable="true"/>
+            android:hint="Age"
+            android:inputType="number"
+            android:enabled="false"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="8dp"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
         app:boxStrokeColor="@color/greenPrimary"
         app:hintTextColor="@color/greenPrimary">
@@ -92,6 +93,57 @@
             android:layout_height="wrap_content"
             android:hint="Gender"
             android:inputType="none"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        app:boxStrokeColor="@color/greenPrimary"
+        app:hintTextColor="@color/greenPrimary">
+
+        <com.google.android.material.textfield.TextInputEditText
+<<<<<<< HEAD
+            android:id="@+id/deviceIdInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Device ID (e.g., G7T55ZGF1)"
+            android:inputType="textCapCharacters"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        app:boxStrokeColor="@color/greenPrimary"
+        app:hintTextColor="@color/greenPrimary">
+
+        <com.google.android.material.textfield.TextInputEditText
+=======
+>>>>>>> b5d2a787b9a45a98a510a50dd5229195138620a5
+            android:id="@+id/latitudeInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Latitude"
+            android:inputType="numberDecimal|numberSigned"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        app:boxStrokeColor="@color/greenPrimary"
+        app:hintTextColor="@color/greenPrimary">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/longitudeInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Longitude"
+            android:inputType="numberDecimal|numberSigned"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
